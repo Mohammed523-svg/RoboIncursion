@@ -1,7 +1,7 @@
 #include <NewPing.h>
 
-#define ULTRASONIC_SENSOR_TRIG 3
-#define ULTRASONIC_SENSOR_ECHO 2
+#define ULTRASONIC_SENSOR_TRIG 11
+#define ULTRASONIC_SENSOR_ECHO 12
 
 #define MAX_FORWARD_MOTOR_SPEED 50
 #define MAX_MOTOR_TURN_SPEED_ADJUSTMENT 25
@@ -9,16 +9,16 @@
 #define MIN_DISTANCE 5
 #define MAX_DISTANCE 30
 
-#define IR_SENSOR_RIGHT A1
-#define IR_SENSOR_LEFT A0
+#define IR_SENSOR_RIGHT 2
+#define IR_SENSOR_LEFT 3
 
 //Right motor
 int enableRightMotor=5;
-int rightMotorPin1=6;
-int rightMotorPin2=7;
+int rightMotorPin1=7;
+int rightMotorPin2=8;
 
 //Left motor
-int enableLeftMotor=11;
+int enableLeftMotor=6;
 int leftMotorPin1=9;
 int leftMotorPin2=10;
 

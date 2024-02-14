@@ -3,25 +3,25 @@
 // All the very best!!!
 
 //Motor 1
-const int ena = 10;                                                                 
-const int in1 = 9;
+const int ena = 6;                                                                 
+const int in1 = 7;
 const int in2 = 8;
 
 //Motor 2
 const int enb = 5;
-const int in3 = 7;
-const int in4 = 6;
+const int in3 = 9;
+const int in4 = 10;
 
 //Defining variable for the speed of the motor
 int motorSpeed = 0;
 
 //Defining two of the ir sensors as ir1 and ir2
-const int ir1 = A0;
-const int ir2 = A1;
+const int ir1 = 11;
+const int ir2 = 12;
 
 //Defining values from the two ir sensors
-int ir1Val = analogRead(ir1);
-int ir2Val = analogRead(ir2); 
+int ir1Val = digitalRead(ir1);
+int ir2Val = digitalRead(ir2); 
 
 
 void setup() {

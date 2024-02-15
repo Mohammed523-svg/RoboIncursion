@@ -1,83 +1,304 @@
-// Pin assignments for the L298N motor driver
-const int motor1EnablePin = 10;  // Enable pin for Motor 1
-const int motor1In1 = 9;        // Input 1 for Motor 1
-const int motor1In2 = 8;        // Input 2 for Motor 1
-const int motor2EnablePin = 5; // Enable pin for Motor 2
-const int motor2In3 = 7;       // Input 3 for Motor 2
-const int motor2In4 = 6;       // Input 4 for Motor 2
-const int motor3EnablePin = 11; // Enable pin for Motor 3
-const int motor3In1 = 12;       // Input 1 for Motor 3
-const int motor3In2 = 13;       // Input 2 for Motor 3
+#define light_FR  14    //LED Front Right   pin A0 for Arduino Uno
+#define light_FL  15    //LED Front Left    pin A1 for Arduino Uno
+#define light_BR  16    //LED Back Right    pin A2 for Arduino Uno
+#define light_BL  17    //LED Back Left     pin A3 for Arduino Uno
+#define horn_Buzz 18    //Horn Buzzer       pin A4 for Arduino Uno
 
-// Pin assignment for the flame sensor
-const int flameSensorPin = A0;  // Change this to the actual pin your flame sensor is connected to
+#define ENA_m1 5        // Enable/speed motor Front Right 
+#define ENB_m1 6        // Enable/speed motor Back Right
+#define ENA_m2 10       // Enable/speed motor Front Left
+#define ENB_m2 11       // Enable/speed motor Back Left
 
-void setup() {
-  // Set up motor control pins
-  pinMode(motor1EnablePin, OUTPUT);
-  pinMode(motor1In1, OUTPUT);
-  pinMode(motor1In2, OUTPUT);
-  pinMode(motor2EnablePin, OUTPUT);
-  pinMode(motor2In3, OUTPUT);
-  pinMode(motor2In4, OUTPUT);
-  pinMode(motor3EnablePin, OUTPUT);
-  pinMode(motor3In1, OUTPUT);
-  pinMode(motor3In2, OUTPUT);
+#define IN_11  2    		// L298N #1 in 1 motor Front Right
+#define IN_12  3    		// L298N #1 in 2 motor Front Right
+#define IN_13  4    		// L298N #1 in 3 motor Back Right
+#define IN_14  7    		// L298N #1 in 4 motor Back Right
 
-  // Start the serial communication
-  Serial.begin(9600);
-}
+#define IN_21  8    		// L298N #2 in 1 motor Front Left
+#define IN_22  9    		// L298N #2 in 2 motor Front Left
+#define IN_23  12   		// L298N #2 in 3 motor Back Left
+#define IN_24  13   		// L298N #2 in 4 motor Back Left
 
-void loop() {
-  // Read the sensor value
-  int sensorValue = analogRead(flameSensorPin);
+int command; 			      //Int to store app command state.
+int speedCar = 100; 		// 50 - 255.
+int speed_Coeff = 4;
+boolean lightFront = false;
+boolean lightBack = false;
+boolean horn = false;
 
-  // Print the sensor value to the serial monitor
-  Serial.print("Flame Sensor Value: ");
-  Serial.println(sensorValue);
+void setup() {  
+   
+	  pinMode(light_FR, OUTPUT);
+    pinMode(light_FL, OUTPUT);
+    pinMode(light_BR, OUTPUT);
+    pinMode(light_BL, OUTPUT);
+    pinMode(horn_Buzz, OUTPUT);
+    
+	  pinMode(ENA_m1, OUTPUT);
+  	pinMode(ENB_m1, OUTPUT);
+	  pinMode(ENA_m2, OUTPUT);
+	  pinMode(ENB_m2, OUTPUT);
+  
+    pinMode(IN_11, OUTPUT);
+    pinMode(IN_12, OUTPUT);
+    pinMode(IN_13, OUTPUT);
+    pinMode(IN_14, OUTPUT);
+    
+    pinMode(IN_21, OUTPUT);
+    pinMode(IN_22, OUTPUT);
+    pinMode(IN_23, OUTPUT);
+    pinMode(IN_24, OUTPUT);
 
-  // Check if the sensor value falls below 500
-  if (sensorValue < 820) {
-       // Rotate 360 degrees
-    stopRotation();
+	Serial.begin(9600); 
 
-}else{
+  } 
 
-    // Rotate 360 degrees
-    rotate360Degrees();
+void goAhead(){ 
+
+      digitalWrite(IN_11, HIGH);
+      digitalWrite(IN_12, LOW);
+	    analogWrite(ENA_m1, speedCar);
+
+      digitalWrite(IN_13, LOW);
+      digitalWrite(IN_14, HIGH);
+	    analogWrite(ENB_m1, speedCar);
+
+
+      digitalWrite(IN_21, LOW);
+      digitalWrite(IN_22, HIGH);
+	    analogWrite(ENA_m2, speedCar);
+
+
+      digitalWrite(IN_23, HIGH);
+      digitalWrite(IN_24, LOW);
+	    analogWrite(ENB_m2, speedCar);
 
   }
-}
+
+void goBack(){ 
+
+      digitalWrite(IN_11, LOW);
+      digitalWrite(IN_12, HIGH);
+	    analogWrite(ENA_m1, speedCar);
 
 
-// Function to rotate the Arduino 360 degrees
-void rotate360Degrees() {
-  // Set motor directions to rotate the robot
-  digitalWrite(motor1In1, HIGH);
-  digitalWrite(motor1In2, LOW);
-  digitalWrite(motor2In3, LOW);
-  digitalWrite(motor2In4, HIGH);
+      digitalWrite(IN_13, HIGH);
+      digitalWrite(IN_14, LOW);
+	    analogWrite(ENB_m1, speedCar);
 
-  // Continuously check the sensor value while rotating
-  while (analogRead(flameSensorPin) < 870) {
-  // Continue rotating until the condition is met
+
+      digitalWrite(IN_21, HIGH);
+      digitalWrite(IN_22, LOW);
+	    analogWrite(ENA_m2, speedCar);
+
+
+      digitalWrite(IN_23, LOW);
+      digitalWrite(IN_24, HIGH);
+	    analogWrite(ENB_m2, speedCar);
+
   }
 
-  // Set motor speeds to rotate the robot
-  analogWrite(motor1EnablePin, 45);  // Adjust the speed as needed
-  analogWrite(motor2EnablePin, 45);
+void goRight(){ 
 
-  // Rotate for approximately 2 seconds (adjust as needed)
-  delay(2000);
+      digitalWrite(IN_11, LOW);
+      digitalWrite(IN_12, HIGH);
+	    analogWrite(ENA_m1, speedCar);
 
-  // Stop the motors
-  analogWrite(motor1EnablePin, 0);
-  analogWrite(motor2EnablePin, 0);
+
+      digitalWrite(IN_13, HIGH);
+      digitalWrite(IN_14, LOW);
+	    analogWrite(ENB_m1, speedCar);
+
+
+      digitalWrite(IN_21, LOW);
+      digitalWrite(IN_22, HIGH);
+	    analogWrite(ENA_m2, speedCar);
+
+
+      digitalWrite(IN_23, HIGH);
+      digitalWrite(IN_24, LOW);
+	    analogWrite(ENB_m2, speedCar);
+
+
+  }
+
+void goLeft(){
+
+      digitalWrite(IN_11, HIGH);
+      digitalWrite(IN_12, LOW);
+	    analogWrite(ENA_m1, speedCar);
+
+
+      digitalWrite(IN_13, LOW);
+      digitalWrite(IN_14, HIGH);
+	    analogWrite(ENB_m1, speedCar);
+
+        
+      digitalWrite(IN_21, HIGH);
+      digitalWrite(IN_22, LOW);
+	    analogWrite(ENA_m2, speedCar);
+
+
+      digitalWrite(IN_23, LOW);
+      digitalWrite(IN_24, HIGH);
+	    analogWrite(ENB_m2, speedCar);
+
+        
+  }
+
+void goAheadRight(){
+      
+      digitalWrite(IN_11, HIGH);
+      digitalWrite(IN_12, LOW);
+      analogWrite(ENA_m1, speedCar/speed_Coeff);
+
+      digitalWrite(IN_13, LOW);
+      digitalWrite(IN_14, HIGH);
+      analogWrite(ENB_m1, speedCar/speed_Coeff);
+
+
+      digitalWrite(IN_21, LOW);
+      digitalWrite(IN_22, HIGH);
+      analogWrite(ENA_m2, speedCar);
+
+
+      digitalWrite(IN_23, HIGH);
+      digitalWrite(IN_24, LOW);
+      analogWrite(ENB_m2, speedCar);
+ 
+  }
+
+void goAheadLeft(){
+      
+      digitalWrite(IN_11, HIGH);
+      digitalWrite(IN_12, LOW);
+      analogWrite(ENA_m1, speedCar);
+
+      digitalWrite(IN_13, LOW);
+      digitalWrite(IN_14, HIGH);
+      analogWrite(ENB_m1, speedCar);
+
+
+      digitalWrite(IN_21, LOW);
+      digitalWrite(IN_22, HIGH);
+      analogWrite(ENA_m2, speedCar/speed_Coeff);
+
+
+      digitalWrite(IN_23, HIGH);
+      digitalWrite(IN_24, LOW);
+      analogWrite(ENB_m2, speedCar/speed_Coeff);
+ 
+  }
+
+void goBackRight(){ 
+
+      digitalWrite(IN_11, LOW);
+      digitalWrite(IN_12, HIGH);
+      analogWrite(ENA_m1, speedCar/speed_Coeff);
+
+
+      digitalWrite(IN_13, HIGH);
+      digitalWrite(IN_14, LOW);
+      analogWrite(ENB_m1, speedCar/speed_Coeff);
+
+
+      digitalWrite(IN_21, HIGH);
+      digitalWrite(IN_22, LOW);
+      analogWrite(ENA_m2, speedCar);
+
+
+      digitalWrite(IN_23, LOW);
+      digitalWrite(IN_24, HIGH);
+      analogWrite(ENB_m2, speedCar);
+
+  }
+
+void goBackLeft(){ 
+
+      digitalWrite(IN_11, LOW);
+      digitalWrite(IN_12, HIGH);
+      analogWrite(ENA_m1, speedCar);
+
+
+      digitalWrite(IN_13, HIGH);
+      digitalWrite(IN_14, LOW);
+      analogWrite(ENB_m1, speedCar);
+
+
+      digitalWrite(IN_21, HIGH);
+      digitalWrite(IN_22, LOW);
+      analogWrite(ENA_m2, speedCar/speed_Coeff);
+
+
+      digitalWrite(IN_23, LOW);
+      digitalWrite(IN_24, HIGH);
+      analogWrite(ENB_m2, speedCar/speed_Coeff);
+
+  }
+
+void stopRobot(){  
+
+      digitalWrite(IN_11, LOW);
+      digitalWrite(IN_12, LOW);
+	    analogWrite(ENA_m1, speedCar);
+
+
+      digitalWrite(IN_13, LOW);
+      digitalWrite(IN_14, LOW);
+	    analogWrite(ENB_m1, speedCar);
+
+  
+      digitalWrite(IN_21, LOW);
+      digitalWrite(IN_22, LOW);
+	    analogWrite(ENA_m2, speedCar);
+
+      
+      digitalWrite(IN_23, LOW);
+      digitalWrite(IN_24, LOW);
+	    analogWrite(ENB_m2, speedCar);
+  
+  }
+  
+void loop(){
+  
+if (Serial.available() > 0) {
+	command = Serial.read();
+	stopRobot(); 			//Initialize with motors stopped.
+
+if (lightFront) {digitalWrite(light_FR, HIGH); digitalWrite(light_FL, HIGH);}
+if (!lightFront) {digitalWrite(light_FR, LOW); digitalWrite(light_FL, LOW);}
+if (lightBack) {digitalWrite(light_BR, HIGH); digitalWrite(light_BL, HIGH);}
+if (!lightBack) {digitalWrite(light_BR, LOW); digitalWrite(light_BL, LOW);}
+if (horn) {digitalWrite(horn_Buzz, HIGH);}
+if (!horn) {digitalWrite(horn_Buzz, LOW);}
+
+switch (command) {
+case 'F':goAhead();break;
+case 'B':goBack();break;
+case 'L':goLeft();break;
+case 'R':goRight();break;
+case 'I':goAheadRight();break;
+case 'G':goAheadLeft();break;
+case 'J':goBackRight();break;
+case 'H':goBackLeft();break;
+case '0':speedCar = 100;break;
+case '1':speedCar = 115;break;
+case '2':speedCar = 130;break;
+case '3':speedCar = 145;break;
+case '4':speedCar = 160;break;
+case '5':speedCar = 175;break;
+case '6':speedCar = 190;break;
+case '7':speedCar = 205;break;
+case '8':speedCar = 220;break;
+case '9':speedCar = 235;break;
+case 'q':speedCar = 255;break;
+case 'W':lightFront = true;break;
+case 'w':lightFront = false;break;
+case 'U':lightBack = true;break;
+case 'u':lightBack = false;break;
+case 'V':horn = true;break;
+case 'v':horn = false;break;
+
 }
-
-// Function to stop the rotation
-void stopRotation() {
-  // Stop the motors
-  analogWrite(motor1EnablePin, 0);
-  analogWrite(motor2EnablePin, 0);
+}
 }

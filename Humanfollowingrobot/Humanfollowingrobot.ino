@@ -9,8 +9,8 @@
 #define MIN_DISTANCE 5
 #define MAX_DISTANCE 30
 
-#define IR_SENSOR_RIGHT 2
-#define IR_SENSOR_LEFT 3
+#define IR_SENSOR_RIGHT A0
+#define IR_SENSOR_LEFT A1
 
 //Right motor
 int enableRightMotor=5;
